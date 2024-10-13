@@ -1,0 +1,26 @@
+﻿@using System.Globalization
+@model List<QRCodeInASPNetCore.Models.UserInfoModel>
+
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Patient List</h1>
+<h3>@DateTime.UtcNow.AddHours(5.5).Date.ToString("dd-MMM-yyyy", CultureInfo.InvariantCulture)</h3>
+@* <button class="btn btn-dark text-right" value="Refresh" id="refreshPatient"></button> *@
+<hr />
+<div id="patientListPartial">
+    @Html.Partial("_PatientList", Model)
+</div>
+<script>
+    $(function () {
+        setInterval(function () { $('#patientListPartial').load('/TokenGen/RefershPatientList'); }, 2000;
+    });
+</script>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+  
+}

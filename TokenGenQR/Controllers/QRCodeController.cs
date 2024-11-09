@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using QRCodeInASPNetCore.Models;
 using QRCoder;
 using System;
@@ -10,18 +11,18 @@ using static QRCoder.PayloadGenerator;
 
 namespace QRCodeInASPNetCore.Controllers
 {
+    [Authorize]
     public class QRCodeController : Controller
     {
         public IActionResult Index()
         {
-            ViewBag.ShowNavBar = true;
             QRCodeModel model = new QRCodeModel();
             Payload payload = null;
             var time3pm = new TimeSpan(15, 0, 0);
             var currentTime = DateTime.UtcNow.AddHours(5.5).TimeOfDay;
             var qrDate = time3pm < currentTime ? DateTime.UtcNow.AddHours(5.5).AddDays(1).Date : DateTime.UtcNow.AddHours(5.5).Date;
             model.QrGenDate = qrDate.ToString("dd-MMM-yyyy", CultureInfo.InvariantCulture);
-            model.WebsiteURL = $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}" + "/TokenGen?encpass=" +Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(qrDate.ToString()));
+            model.WebsiteURL = $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}" + "/TokenGen/Index/?encpass=" +Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(qrDate.ToString()));
             payload = new Url(model.WebsiteURL);
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
             QRCodeData qrCodeData = qrGenerator.CreateQrCode(payload);

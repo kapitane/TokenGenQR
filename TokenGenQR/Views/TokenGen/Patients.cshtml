@@ -6,21 +6,47 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Patient List</h1>
-<h3>@DateTime.UtcNow.AddHours(5.5).Date.ToString("dd-MMM-yyyy", CultureInfo.InvariantCulture)</h3>
-@* <button class="btn btn-dark text-right" value="Refresh" id="refreshPatient"></button> *@
-<hr />
-<div id="patientListPartial">
-    @Html.Partial("_PatientList", Model)
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 mt-2">
+            <h1>Patient List</h1>
+            <h3>@DateTime.UtcNow.AddHours(5.5).Date.ToString("dd-MMM-yyyy", CultureInfo.InvariantCulture)</h3>
+        </div>
+        <div class="col-md-6 mt-4">
+            <label>Select Date:</label>
+            <input type="date" id="datePicker" class="form-control" />
+        </div>
+        <div class="col-md-6 text-right mt-4">
+            <button class="btn btn-dark" value="Refresh" id="refreshButton">Get Patient List</button>
+        </div>
+    </div>
+    <hr />
+    <div id="patientList">
+        @Html.Partial("_PatientList", Model)
+    </div>
 </div>
-<script>
-    $(function () {
-        setInterval(function () { $('#patientListPartial').load('/TokenGen/RefershPatientList'); }, 2000;
-    });
-</script>
+
 @section Scripts {
+
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-  
+    <script>
+        $(document).ready(function () {
+            $('#refreshButton').click(function () {
+                var selectedDate = $('#datePicker').val();
+                $.ajax({
+                    url: '@Url.Action("RefreshPatientList", "TokenGen")',
+                    type: 'GET',
+                    data: { date: selectedDate },
+                    success: function (data) {
+                        $('#patientList').html(data);
+                    },
+                    error: function () {
+                        alert('Error loading patient list');
+                    }
+                });
+            });
+        });
+    </script>
 }

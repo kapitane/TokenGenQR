@@ -16,11 +16,11 @@ namespace TokenGenQR.Services
             _db = db;
         }
 
-        public IEnumerable<UserInfoModel> ReadPatients(int? patientId = null)
+        public IEnumerable<UserInfoModel> ReadPatients(int? patientId = null, DateTime? date = null)
         {
             var patients = _db.Query<UserInfoModel>(
                 "sp_GetPatient",
-                new { ID = patientId },
+                new { ID = patientId, Date = date },
                 commandType: CommandType.StoredProcedure);
 
             return patients;

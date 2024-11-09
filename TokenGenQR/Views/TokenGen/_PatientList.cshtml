@@ -20,7 +20,7 @@
                     @foreach (var item in Model)
                     {
                         <tr class="@(item.PatientType == "old" ? "table-success" : "table-primary") ">
-                            <td>@(Model.IndexOf(item)+1)</td>
+                            <td>@(Model.IndexOf(item) + 1)</td>
                             <th scope="row">@item.Token</th>
                             <td>@item.Name</td>
                             <td>@item.Phone</td>
@@ -33,9 +33,7 @@
                 {
                     <tr class="text-center"><td colspan="6">No Record Found</td></tr>
                 }
-
             </tbody>
         </table>
-
     </div>
 </div>

@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using QRCodeInASPNetCore.Models;
 using System;
 using System.Globalization;
-using System.IO;
 using System.Text;
 using TokenGenQR.Services;
 
@@ -12,7 +12,7 @@ namespace QRCodeInASPNetCore.Controllers
     public class TokenGenController : Controller
     {
         private DataService _dataService;
-       
+
         public TokenGenController(DataService dataService)
         {
             _dataService = dataService;
@@ -20,7 +20,6 @@ namespace QRCodeInASPNetCore.Controllers
 
         public IActionResult Index(string encpass)
         {
-            ViewBag.ShowNavBar = false;
             var model = new UserInfoModel();
             var date = DecodeBase64(encpass);
             if (date != DateTime.UtcNow.AddHours(5.5).Date.ToString())
@@ -40,7 +39,6 @@ namespace QRCodeInASPNetCore.Controllers
 
         public IActionResult AddPatientInfo(string patientType)
         {
-            ViewBag.ShowNavBar = false;
             var model = new UserInfoModel();
             model.PatientType = patientType;
             return View(model);
@@ -49,20 +47,23 @@ namespace QRCodeInASPNetCore.Controllers
         [HttpPost]
         public IActionResult AddPatientInfo(UserInfoModel model)
         {
-            return View("Token", _dataService.AddPatient(model));
+            if (ModelState.IsValid)
+            {
+                return View("Token", _dataService.AddPatient(model));
+            }
+            return View(model);
         }
 
+        [Authorize]
         public ActionResult Patients()
         {
-            ViewBag.ShowNavBar = true;
             var model = _dataService.ReadPatients();
             return View(model);
         }
 
-        public ActionResult RefershPatientList()
+        public ActionResult RefreshPatientList(DateTime? date)
         {
-            ViewBag.ShowNavBar = true;
-            var model = _dataService.ReadPatients();
+            var model = _dataService.ReadPatients(date: date);
             return PartialView("_PatientList", model);
         }
 

@@ -15,10 +15,11 @@ namespace QRCodeInASPNetCore.Models
         [DisplayName("Phone Number")]
         public string Phone { get; set; }
 
-        [Required]
         [DisplayName("Group Name")]
         public string GroupName { get; set; }
         public int Token { get; set; }
+
+        [Required]
         [DisplayName("Patient Type")]
         public string PatientType { get; set; }
     }
